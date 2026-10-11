@@ -1,0 +1,14 @@
+#!/bin/bash
+# Set the F4 mic-mute LED on the Acer Swift SF314-44 (Realtek ALC256, GPIO pin 3)
+case "$1" in
+  on)  v=0x04 ;;
+  off) v=0x00 ;;
+  *)   echo "usage: $0 on|off" >&2; exit 2 ;;
+esac
+for d in /sys/class/sound/hwC*D0; do
+  [ "$(cat "$d/vendor_id")" = 0x10ec0256 ] || continue
+  dev=/dev/snd/${d##*/}
+  /usr/bin/hda-verb "$dev" 0x01 SET_GPIO_MASK 0x04 >/dev/null
+  /usr/bin/hda-verb "$dev" 0x01 SET_GPIO_DIR 0x04 >/dev/null
+  /usr/bin/hda-verb "$dev" 0x01 SET_GPIO_DATA "$v" >/dev/null
+done

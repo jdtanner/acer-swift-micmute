@@ -1,0 +1,20 @@
+#!/bin/bash
+# Keep the F4 mic-mute LED in step with the default microphone's mute state
+last=
+sync_led() {
+  local state=off
+  [[ $(pactl get-source-mute @DEFAULT_SOURCE@ 2>/dev/null) == *yes ]] && state=on
+  [[ $state == "$last" && $1 != force ]] && return
+  sudo -n /usr/local/sbin/micmute-led-set "$state" && last=$state
+}
+sync_led force
+# Re-apply every 60s too, in case suspend or codec power saving resets the pin
+pactl subscribe | while true; do
+  if read -r -t 60 line; then
+    [[ $line == *source* || $line == *server* ]] && sync_led
+  elif [[ $? -gt 128 ]]; then
+    sync_led force
+  else
+    exit 1
+  fi
+done
