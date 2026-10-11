@@ -36,6 +36,16 @@ if ! command -v hda-verb >/dev/null; then
     dnf install -y alsa-tools
 fi
 
+# alsa-tools also brings mixer apps for pro sound cards, which are no use here.
+# Hide their launchers from the app grid for this user (the apps stay installed).
+echo "Hiding alsa-tools launchers from the app grid..."
+for f in $(rpm -ql alsa-tools | grep '\.desktop$'); do
+    target="$USER_HOME/.local/share/applications/$(basename "$f")"
+    { cat "$f"; echo "NoDisplay=true"; } > "$target.tmp"
+    install -D -m 644 -o "$SUDO_USER" -g "$SUDO_USER" "$target.tmp" "$target"
+    rm -f "$target.tmp"
+done
+
 # --- 2. Remap F4 from F15 to micmute ---
 
 echo "Installing key remap..."

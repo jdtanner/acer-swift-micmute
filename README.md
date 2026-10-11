@@ -56,7 +56,10 @@ sudo ./install.sh
 
 Then **log out and back in** so GNOME picks up the new key.
 
-The installer adds `alsa-tools` (for `hda-verb`) if it is missing.
+The installer adds `alsa-tools` (for `hda-verb`) if it is missing. That
+package also brings six mixer apps for pro sound cards (Echomixer, Envy24
+Control and others), so the installer hides their launchers from your app grid.
+The apps stay installed.
 
 ## Uninstall
 
@@ -64,7 +67,7 @@ The installer adds `alsa-tools` (for `hda-verb`) if it is missing.
 sudo ./uninstall.sh
 ```
 
-`alsa-tools` is left installed.
+`alsa-tools` is left installed, and its launchers show in the app grid again.
 
 ---
 
@@ -77,6 +80,7 @@ sudo ./uninstall.sh
 | `/etc/sudoers.d/micmute-led` | Lets your user run only that helper, without a password |
 | `~/.local/bin/micmute-led-sync` | Watches the mic mute state and calls the helper |
 | `~/.config/systemd/user/micmute-led.service` | Starts the watcher with your GNOME session |
+| `~/.local/share/applications/*.desktop` (six) | Hide the alsa-tools mixer launchers |
 
 ---
 

@@ -19,6 +19,11 @@ rm -f "$USER_HOME/.config/systemd/user/micmute-led.service" \
       /usr/local/sbin/micmute-led-set \
       /etc/udev/hwdb.d/61-acer-swift-sf314-44-micmute.hwdb
 
+# Unhide the alsa-tools launchers that install.sh hid
+for f in $(rpm -ql alsa-tools 2>/dev/null | grep '\.desktop$'); do
+    rm -f "$USER_HOME/.local/share/applications/$(basename "$f")"
+done
+
 sudo -u "$SUDO_USER" XDG_RUNTIME_DIR="/run/user/$USER_UID" systemctl --user daemon-reload
 systemd-hwdb update
 udevadm trigger --subsystem-match=input --action=change
